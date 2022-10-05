@@ -1,5 +1,5 @@
-## ECE 565 Programming Assignment 1 Fall 2020
-### Professor Tim Rogers
+## ECE 565 Programming Assignment 1 Fall 2022
+### Professor Mithuna Thottethodi
 
 1. **Introduction**
     
@@ -7,33 +7,37 @@
  The gem5 simulator is written primarily in C++. However, configurations are done in Python, so you’ll need to be familiar with Python as well. It’s easy to read, but be aware that spacing in Python matters if you find yourself editing a Python file for the first time – it’s worth finding a quick tutorial on Python to learn the basics. A utility called SWIG is used to combine the configurations in Python and the actual simulator written in C++.
     
 1. **Setup**
-    
-    The assignment has been made available through github classroom. To sign up - please link your github account with your Purdue email by following the directions here:
-    
-    https://classroom.github.com/a/WB9TgrPS
-    
     The programming assignment will be completed on a cluster of "qstruct" servers. There are 19 of these machines. You can access them by ssh’ing into qstruct.ecn.purdue.edu from any terminal. You will use your Purdue Career Account username and password. Below is the sample command for logging in:
+        
     ```console
     ssh <your-career-user-id>@qstruct.ecn.purdue.edu
     ```
     
-    Once logged into qstruct, you will need to install a missing python package and clone your version of the assignment from github classroom. To make a copy of your code locally use:
-    
+    You will clone a repository that contains a customized version of the gem5 simulator into your own accounts and do all your programming in your local copies.
+ 
     ```console
-    pip3 install --user six
-    module load git # you should add this line to your ~/.bashrc file so that each time you login - otherwise you will end up using an ancient git version
-    git clone https://github.com/purdue-ece565-2020/assignment-1-v4-<your-github-user-name>.git
-    ```
+    git clone /home/yara/mithuna2/gem5-Fall2022
+    ``` 
+
+    Do **not** clone the repository directly from gem5.org. The ECE-565 customized version has changes for compatibility with ECN-installed libraries. 
+   
+    (Git is the world's most popular revision control system, so if you are not familiar with it, now is a great time :).
+    Given it's popularity, it is very well documented simply googling will give you a number of high-quality tutorials to get you familiar with it. This assignment document will provide you with the basic commands.)
     
-    Git is the world's most popular revision control system, so if you are not familiar with it, now is a great time :).
-    Given it's popularity, it is very well documented simply googling will give you a number of high-quality tutorials to get you familiar with it. This assignemnet doc will provide you with the basic commands.
     You now have your own fresh copy of gem5! Going into your gem5 directory, you’ll see a variety of folders, including the src directory, where most of your changes will be made. You may find yourself working in the configs directory from time to time as well. It is worth spending some time exploring these directories to get a feel for where different things are.
     
     <img src="screen1.png" width="50%" />
     
 1. **Building gem5**
     
-    gem5 is a highly configurable architectural simulator that supports a number of ISAs (x86, ARM, MIPS, SPARC, POWER, RISCV), CPU Models (InOrder, O3, AtomicSimple, TimingSimple), and two Memory Models (Classic, Ruby). To understand how to build gem5, you must understand what you are building first. Example gem5 build files are located in gem5/build_opts. For example, the ’X86’ file is as follows:
+    The default gcc binaries and libraries available on ECN machines are not compatible with the version of gem5 we use. To use the non-standard version of gcc, some environment variables must be changed. 
+    
+    Modify your `PATH` environment variable to include: `/package/gcc/8.3.0/bin`
+    Modify your `LD_LIBRARY_PATH` environment variable to include: `/package/gcc/8.3.0/lib64`
+    
+    (Note that the directories should be added to the beginning of the environment variables to ensure that the correct version of `gcc` is picked up by `scons-3` . The exact command to add these directories to the environment variable depends on the shell you use. It is your responsibility to figure out the appropriate steps.)
+
+    gem5 is a highly configurable architectural simulator that supports a number of ISAs (x86, ARM, MIPS, SPARC, POWER, RISCV), CPU Models (InOrder, O3, AtomicSimple, TimingSimple), and two Memory Models (Classic, Ruby). To understand how to build gem5, you must understand what you are building first. Example `gem5` build files are located in `gem5/build_opts`. For example, the ’X86’ file is as follows:
     
     ```console
     TARGET_ISA = ’x86’
@@ -54,14 +58,14 @@
 For this assignment, we will use the x86 and ARM build configurations. Now, the command to build this configuration is:
     
     ```console
-    scons-3 -j 4 ./build/X86/gem5.opt
+    scons-3 -j `nproc` ./build/X86/gem5.opt
     ```
     
-    You may be missing the gem5 style hook. If so, just hit enter and let the script install the style hook for you. This build will take quite a while the first time around, so using multiple processes is valuable. Even with 4 processes, it can take over 10 minutes to build. When you build the simulator with scons, all of your source code is copied into the gem5/build directory for that particular build. This means two things. First, you can always simply remove the build directory (or a specific build’s directory inside gem5/build) to start from scratch (think of it like a "make clean"). Second, never make any manual changes within the build directory. You should make your changes elsewhere (i.e. gem5/src), and re-build the simulator. Re-building gem5 after the first build typically only takes a minute or two, depending on your changes.
+    You may be missing the gem5 style hook. If so, just hit enter and let the script install the style hook for you. This build will take quite a while the first time around, so using multiple processes (using the ``-j `nproc` `` option) is valuable. The `nproc` argument results in the use of as many processes as number of processors in the system (40 on qstruct). Even so, it can take over 10 minutes to build. When you build the simulator with scons, all of your source code is copied into the gem5/build directory for that particular build. This means two things. First, you can always simply remove the build directory (or a specific build’s directory inside gem5/build) to start from scratch (think of it like a "make clean"). Second, never make any manual changes within the build directory. You should make your changes elsewhere (i.e. gem5/src), and re-build the simulator. Re-building gem5 after the first build typically only takes a minute or two, depending on your changes.
 
 1. **Running gem5: Hello World**
     
-    The gem5.opt file you built with scons is your binary – this is what you will use to run the simulator. It takes in options and a simulation script (this is where Python comes in). To get started, let’s run a Hello World program on the simulator. Looking in your gem5/configs directory, you’ll see directories including example and spec2k6. You’ll be using spec2k6 configurations to run benchmarks later, but for now take a look in the example directory. The se.py script will be what we need to run Hello World. Take a look at it. You won’t understand all of it just now, but you’ll see how it’s setting up different gem5 configurations.
+    The gem5.opt file you built with scons is your binary – this is what you will use to run the simulator. It takes in options and a simulation script (this is where Python comes in). To get started, let’s run a Hello World program on the simulator. Looking in your gem5/configs directory, you’ll see directories including `example`. Take a look in the example directory. The se.py script will be what we need to run Hello World. Take a look at it. You won’t understand all of it just now, but you’ll see how it’s setting up different gem5 configurations.
     
     Now that we have a script to use with gem5, we need an actual Hello World binary to run on the simulator. gem5 comes with Hello World binaries already compiled for each ISA it supports. You can find them in gem5/tests/test-progs/hello/bin. Since we’ve built an x86 model, we’ll want the gem5/tests/test-progs/hello/bin/x86/linux/hello binary. 
     
@@ -75,23 +79,7 @@ For this assignment, we will use the x86 and ARM build configurations. Now, the 
     
 1. **Running gem5: Benchmarks**
     
-    For the programming assignment, you’ll need to run benchmarks from the SPEC2006 benchmark suite. These are available at /home/min/a/ece565/benchspec-2020/, and a Python configuration script to run the benchmarks is in your copy of gem5.
-    The benchmarks you’ll be running in this assignment are sjeng, libquantum, and bzip2.
-    
-    Using the gem5/configs/spec2k6/run.py script, you can run the following command:
-    
-    ```console
-    scons-3 -j 4 ./build/ARM/gem5.opt
-    ./build/ARM/gem5.opt -d my_outputs configs/spec2k6/run.py -b bzip2 --maxinsts=250000 --cpu-type=MinorCPU --l1d_size=64kB --l1i_size=16kB --caches --l2cache
-    ```
-    
-    As before with Hello World, we simply use the gem5.opt binary we built to run the simulator. However, here we added a -d flag to the gem5.opt run. This allows us to specify an output directory, rather than use the default m5out directory we saw during our Hello World run. You can see the new "my_outputs" directory created for the output of this run. Note that the -d flag came before the Python script file. This is because the -d flag is an option for the gem5.opt binary, not an option for the script.
-    
-    There are a number of other options we passed to the script to run the simulator with a particular CPU and cache configuration. To see the entire setup of any run, refer to the *config.ini* in the output directory (for example *my_outputs/config.ini*). This will contain the actual system simulated. You can play with these parameters as you like (and add your own options).
-    
-    Now looking at the script used to run the SPEC2006 benchmarks, we see it’s located in the configs/spec2k6 directory we saw earlier. Here, we use the -b flag to specify which benchmark we want to run – in this case, bzip2. The --maxinsts=X flag is used to specify how many instructions to run the benchmarks for. These benchmarks are massive and take hours upon hours to complete in full, so it will often be useful to run them only for a specific number of instructions. Since these options all apply to the script, they come after the script in the command, not before it.
-    
-    Try running the other benchmarks, sjeng and libquantum, and have them all output to separate directories. More options for the gem5/configs/spec2k6/run.py script can be seen by using the -h flag, or by going into the file and looking around.
+    For the programming assignment, you’ll need to run benchmarks from the SPEC CPU benchmark suite. Instructions on how to run benchmarks will be provided separately. 
 
 1. **Assignment**
     
@@ -103,7 +91,7 @@ For this assignment, we will use the x86 and ARM build configurations. Now, the 
     * Degrade branch prediction
     * Split the Execution stage into two separate pipeline stages
     
-    Each of these are detailed further below. For part (i), just evaluate the example code, running to completion. For parts (ii) and (iii), you will need to run the sjeng, bzip2, and libquantum benchmarks for 100 million instructions.  These results will then be compared to the baseline gem5 performance for the MinorCPU model. Make sure to take advantage of different output directories to avoid overwriting output data from different runs.
+    Each of these are detailed further below. For part (i), just evaluate the example code, running to completion. For parts (ii) and (iii), you will need to run the SPEC benchmarks (which will be provided separately) for 100 million instructions.  These results will then be compared to the baseline gem5 performance for the MinorCPU model. Make sure to take advantage of different output directories to avoid overwriting output data from different runs.
     
     A nice overview of MinorCPU can be found here: https://www.gem5.org/documentation/general_docs/cpu_models/minor_cpu
     
@@ -294,7 +282,7 @@ For this assignment, we will use the x86 and ARM build configurations. Now, the 
         For this part and the following part (split execution stage) you should use the ARM build of gem5. Make sure you are building the ARM version using the command line:
         
         ```console
-        scons-3 -j 4 ./build/ARM/gem5.opt
+        scons-3 -j `nproc` ./build/ARM/gem5.opt
         ```
         
         The MinorCPU already implements a few branch predictor modules, including a tournament predictor and a simpler Branch Target Buffer (BTB). The pipeline timing enables you to figure out at the EX stage whether or not the branch prediction was correct. What you need to do is implement an option that will allow you to not only enable/disable the branch predictor, but degrade its accuracy to different levels as well.
@@ -304,7 +292,7 @@ For this assignment, we will use the x86 and ARM build configurations. Now, the 
         It would be functionally correct to squash the pending instructions if the predicted target is correct, but it would not be functionally correct to consider the branch correctly predicted when the predicted target does not match the actual branch target, and still consider it to be correct. For this part of the assignment, you need to implement a feature that degrades the branch predictor’s accuracy by treating some correctly predicted branches as incorrect. You will need to generate a random number between 0 and 1, and for a specified accuracy of X%, if the generated number is greater than X%, consider it a misprediction. Note that this "accuracy" is not the branch predictor’s accuracy, but the percentage of it’s original accuracy. That is, 100% would be equal to the default branch predictor’s accuracy, 50% would be half of the original predictor’s accuracy, and 0% would be an always incorrect predictor – it always predicts the wrong thing.
         
         For this, you will need to run the benchmark simulations for those three "accuracies:"
-        
+       
         * 100%
         * 50%
         * 0%
@@ -315,25 +303,6 @@ For this assignment, we will use the x86 and ARM build configurations. Now, the 
 
 1. **Submission instructions**
     
-    You will submit your code through the github classroom interface. Some basic command you will need for git are:
-    
-    ```console
-    git status # Tells you what files you have modified
-    git add <file name> # Once you have modified a file, adding it will "stage" it for commiting.
-    git commit # commits all the files you currently have staged
-    git push # sends all the commits you have made to the remote reposity, where they are backed up and the instructor can see them.
-    ```
-    
-    Note that gem5 has some committing requirements. You have to structure your commit message like:
-    
-    ```console
-    git commit -m "<component-touched>: short description"
-    # i.e.
-    git commit -m "python: made the scripts work with python3"
-    ```
-    
-    This restriction is mostly for development purposes, if you want to tag everything with *cpu:* or *python*, thats fine.
-    
-    As a general rule (for your own sake) I recommend committing often, so that you can undo things you messed up and you have a nice record for yourself of all the things you have done. When grading the assignment, I will only look at the final version of the code, regardless of the commit history.
+    The main deliverable of this assignment that will be graded is a report (and not the code). The code will still have to be submitted for plagiarism checking. But the code is not what gets graded.
     
     Submit a report (maximum three pages) with graphs and/or tables to present results via brightspace. Each graph should summarize the results of one of the experiments. (Suggested format: Plot bar-graphs with benchmarks on the X-axis and IPC on the Y-axis. For each benchmark, show two or more bars; one is the baseline and the rest correspond to your changes.) The report is NOT meant to be an exercise in writing. I do not expect any text beyond a 2-3 sentence summary of the key observations for each graph. However, this is a minimum and not a maximum. If you have text you want me to see (e.g., assumptions, simplifications, data-gathering difficulties etc.), feel free to write additional text in the report. Also if the branch of code you want me to look at is anything other than *master*, please indicate this in the report.
