@@ -3,8 +3,8 @@
 
 1. **Introduction**
     
-    This assignment will serve as an introduction to the gem5 simulator. It will walk you through the necessary steps to set up the simulator on your account, and provide you with some introductory tasks that will help you familiarize yourself with the gem5 structure and source tree. While the tasks aren’t difficult in and of themselves, do not underestimate the time it will take to get familiar with the gem5 source tree before you’ll be able to complete the tasks.
- The gem5 simulator is written primarily in C++. However, configurations are done in Python, so you’ll need to be familiar with Python as well. It’s easy to read, but be aware that spacing in Python matters if you find yourself editing a Python file for the first time – it’s worth finding a quick tutorial on Python to learn the basics. A utility called SWIG is used to combine the configurations in Python and the actual simulator written in C++.
+    This assignment will serve as an introduction to the `gem5` simulator. It will walk you through the necessary steps to set up the simulator on your account, and provide you with some introductory tasks that will help you familiarize yourself with the `gem5` structure and source tree. While the tasks aren’t difficult in and of themselves, do not underestimate the time it will take to get familiar with the `gem5` source tree before you’ll be able to complete the tasks.
+ The `gem5` simulator is written primarily in C++. However, configurations are done in Python, so you’ll need to be familiar with Python as well. It’s easy to read, but be aware that spacing in Python matters if you find yourself editing a Python file for the first time – it’s worth finding a quick tutorial on Python to learn the basics. A utility called SWIG is used to combine the configurations in Python and the actual simulator written in C++.
     
 1. **Setup**
     The programming assignment will be completed on a cluster of "qstruct" servers. There are 19 of these machines. You can access them by ssh’ing into qstruct.ecn.purdue.edu from any terminal. You will use your Purdue Career Account username and password. Below is the sample command for logging in:
@@ -22,11 +22,11 @@
     Do **not** clone the repository directly from gem5.org. The ECE-565 customized version has changes for compatibility with ECN-installed libraries. 
    
     (Git is the world's most popular revision control system, so if you are not familiar with it, now is a great time :).
-    Given it's popularity, it is very well documented simply googling will give you a number of high-quality tutorials to get you familiar with it. This assignment document will provide you with the basic commands.)
+    Given it's popularity, it is easy to find high quality documentation/tutorials online. This assignment document will provide you with the basic commands, but it is a good idea to become broadly familiar with git.)
     
     You now have your own fresh copy of gem5! Going into your gem5 directory, you’ll see a variety of folders, including the src directory, where most of your changes will be made. You may find yourself working in the configs directory from time to time as well. It is worth spending some time exploring these directories to get a feel for where different things are.
     
-    <img src="screen1.png" width="50%" />
+    <img src="gem5clone.png" width="50%" />
     
 1. **Building gem5**
     
@@ -37,17 +37,17 @@
     
     (Note that the directories should be added to the beginning of the environment variables to ensure that the correct version of `gcc` is picked up by `scons-3` . The exact command to add these directories to the environment variable depends on the shell you use. It is your responsibility to figure out the appropriate steps.)
 
-    gem5 is a highly configurable architectural simulator that supports a number of ISAs (x86, ARM, MIPS, SPARC, POWER, RISCV), CPU Models (InOrder, O3, AtomicSimple, TimingSimple), and two Memory Models (Classic, Ruby). To understand how to build gem5, you must understand what you are building first. Example `gem5` build files are located in `gem5/build_opts`. For example, the ’X86’ file is as follows:
+    gem5 is a highly configurable architectural simulator that supports a number of ISAs (x86, ARM, MIPS, SPARC, POWER, RISCV), CPU Models (InOrder, O3, AtomicSimple, TimingSimple, Minor (in-order)), and two Memory Models (Classic, Ruby). To understand how to build gem5, you must understand what you are building first. Example `gem5` build files are located in `gem5/build_opts`. For this assignment you will use the ECE565-specific build options from the ’ECE565-X86’ file whose content is as follows:
     
     ```console
     TARGET_ISA = ’x86’
-    CPU_MODELS = ’AtomicSimpleCPU,TimingSimpleCPU,O3CPU’
+    CPU_MODELS = ’AtomicSimpleCPU,TimingSimpleCPU,O3CPU,MinorCPU’
     PROTOCOL = ’MI_example’
     ```
     
-    <img src="screen2.png" width="50%" />
+    <img src="gem5buildopts.png" width="50%" />
     
-    In this assignment, we will need the *MinorCPU* model, which we can add to the *X86* build options by adding it to the *CPU_MODELS* list, before you compile.
+    In this assignment, the MinorCPU is the relevant CPU model.
     
     We will be using the latest version of gem5, which has fairly up-to-date documentation outside of this assignment.
     For additional pointers on gem5, please see the book on learning gem5:
@@ -55,10 +55,10 @@
     https://www.gem5.org/documentation/learning_gem5/introduction/
     
     This file indicates that the target ISA is X86, and all of the CPU Models should be compiled in. The last line PROTOCOL is a specific type of coherence protocol for the Ruby Memory Model, which we will ignore for now.
-For this assignment, we will use the x86 and ARM build configurations. Now, the command to build this configuration is:
+For this assignment, we will use the ECE565-C86 and the ECE565-ARM build configurations. Now, the command to build this configuration is:
     
     ```console
-    scons-3 -j `nproc` ./build/X86/gem5.opt
+    scons-3 USE_HDF5=0 -j `nproc` ./build/ECE565-X86/gem5.opt
     ```
     
     You may be missing the gem5 style hook. If so, just hit enter and let the script install the style hook for you. This build will take quite a while the first time around, so using multiple processes (using the ``-j `nproc` `` option) is valuable. The `nproc` argument results in the use of as many processes as number of processors in the system (40 on qstruct). Even so, it can take over 10 minutes to build. When you build the simulator with scons, all of your source code is copied into the gem5/build directory for that particular build. This means two things. First, you can always simply remove the build directory (or a specific build’s directory inside gem5/build) to start from scratch (think of it like a "make clean"). Second, never make any manual changes within the build directory. You should make your changes elsewhere (i.e. gem5/src), and re-build the simulator. Re-building gem5 after the first build typically only takes a minute or two, depending on your changes.
@@ -72,7 +72,7 @@ For this assignment, we will use the x86 and ARM build configurations. Now, the 
     To actually run Hello World, go back to your gem5/ directory. The gem5 binary, the configuration script, and the hello binary are all used with the following command:
     
     ```console
-    ./build/X86/gem5.opt configs/example/se.py -c tests/test-progs/hello/bin/x86/linux/hello
+    ./build/ECE565-X86/gem5.opt configs/example/se.py -c tests/test-progs/hello/bin/x86/linux/hello
     ```
    
     Notice that now there is a gem5/m5out directory. Inside, you’ll see a couple of configuration and stats files – they’re specific to your Hello World run. These will be very useful for tracking data in the future.
@@ -149,7 +149,7 @@ For this assignment, we will use the x86 and ARM build configurations. Now, the 
             Compile the program with -O2 flag to avoid running into unimplemented x87 instructions while simulating with gem5. Report the breakup of instructions for different op classes. For this, grep for op_class in the file stats.txt. Run the compiled file using
             
             ```console
-            ./build/X86/gem5.opt configs/example/se.py -c <output-from-daxpy-build>
+            ./build/ECE565-X86/gem5.opt configs/example/se.py -c <output-from-daxpy-build>
             ```
     
         1. **Examine the assembly**
@@ -282,7 +282,7 @@ For this assignment, we will use the x86 and ARM build configurations. Now, the 
         For this part and the following part (split execution stage) you should use the ARM build of gem5. Make sure you are building the ARM version using the command line:
         
         ```console
-        scons-3 -j `nproc` ./build/ARM/gem5.opt
+        scons-3 USE_HDF5=0 -j `nproc` ./build/ECE565-ARM/gem5.opt
         ```
         
         The MinorCPU already implements a few branch predictor modules, including a tournament predictor and a simpler Branch Target Buffer (BTB). The pipeline timing enables you to figure out at the EX stage whether or not the branch prediction was correct. What you need to do is implement an option that will allow you to not only enable/disable the branch predictor, but degrade its accuracy to different levels as well.
