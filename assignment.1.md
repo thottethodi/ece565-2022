@@ -144,7 +144,7 @@ For this assignment, we will use the ECE565-C86 and the ECE565-ARM build configu
             To compile the code on qstruct, use the following compiler arguments (for c++11 and optimizations):
                     
             ```console
-            g++ -O2 -std=gnu++11 daxpy.cc
+            /usr/bin/g++ -O2 -std=gnu++11 daxpy.cc
             ```
             Compile the program with -O2 flag to avoid running into unimplemented x87 instructions while simulating with gem5. Report the breakup of instructions for different op classes. For this, grep for op_class in the file stats.txt. Run the compiled file using
             
