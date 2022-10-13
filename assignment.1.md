@@ -157,9 +157,31 @@ For this assignment, we will use the ECE565-C86 and the ECE565-ARM build configu
             Generate the assembly code for the daxpy program above by using the -S and -O2 options when compiling with GCC. As you can see from the assembly code, instructions that are not central to the actual task of the program (computing aX + Y) will also be simulated. This includes the instructions for generating the vectors X and Y, summing elements in Y and printing the sum. When I compiled the code with -S, I got about 350 lines of assembly code, with only about 10-15 lines for the actual daxpy loop.
 
             Usually while carrying out experiments for evaluating a design, one would like to look only at statistics for the portion of the code that is most important. To do so, typically programs are annotated so that the simulator, on reaching an annotated portion of the code, carries out functions like create a checkpoint, output and reset statistical variables.
+            
+            The mechanism for annotating the code is a library of operates called `m5ops`. You have to build it first. To do so, you need to follow these steps.
+            
+                1. Pull the updates from the main course repository from the main gem5 directory. (You have to commit any uncommitted changes before you can pull.)
 
-            You will edit the C++ code from the first part to output and reset stats just before the start of the DAXPY loop and just after it. For this, include the file ./include/gem5/m5ops.h in the program. Use the function m5_dump_reset_stats() from this file in your program. This function outputs the statistical variables and then resets them. You can provide 0 as the value for the delay and the period arguments.
+             ```console
+                   git pull
+             ``` 
+             
+                2. You will edit the C++ code from the first part to output and reset stats just before the start of the DAXPY loop and just after it. For this, include the file ./include/gem5/m5ops.h in the program. To do so, you should use the line `#include<gem5/m5ops.h"` line in your source file. Use the function `m5_dump_reset_stats()` from this file in your program. This function outputs the statistical variables and then resets them. You can provide 0 as the value for the delay and the period arguments. This edited source file is now ready. But you cannot compile it yet until you have first built the m5ops library. 
+                3. Build the m5ops library using the following command in the `<gem5-Fall2022>/util/m5` directory:
+            
+            ```console
+                scons-3 build/x86/out/m5
+            ```
+            
+                4. Now you can compile the DAXPY code (assuming the filename is daxpy.cc) using the following command from within the part1 directory. (If your source code is in another directory, please modify the include path and library path accordingly.)
+                
+            ```console
+                /usr/bin/g++ -O2 -std=gnu++11 -I ../include -L ../util/m5/build/x86/out/ daxpy.cc -lm5
+            ```
 
+<details>
+    <summary> Old incompatible instructions for m5ops preserved here. Do not use.</summary>
+    
             To provide the definition of the m5_dump_reset_stats(), go to the directory util/m5/src/x86/ and edit the SConsopts in the following way:
 
             ```console
@@ -183,7 +205,10 @@ For this assignment, we will use the ECE565-C86 and the ECE565-ARM build configu
             scons-3 src/x86 
             ```
             
-            This will create an object file named util/m5/build/x86/x86/m5op.o. Link this file with the program for DAXPY. Now again simulate the program with the timing simple CPU. This time you should see three sets of statistics in the file stats.txt. Report the breakup of instructions among different op classes for the three parts of the program. In the assisngment report, provide the fragment of the generated assembly code that starts with the call to m5_dump_reset_stats() and ends m5_dump_reset_stats(), and has the main daxpy loop in between.
+            This will create an object file named util/m5/build/x86/x86/m5op.o. 
+</details>
+
+    Now again simulate the program with the timing simple CPU. This time you should see three sets of statistics in the file stats.txt. Report the breakup of instructions among different op classes for the three parts of the program. In the assignment report, provide the fragment of the generated assembly code that starts with the call to m5_dump_reset_stats() and ends m5_dump_reset_stats(), and has the main daxpy loop in between.
             
         1. **Examine CPU types**
         
