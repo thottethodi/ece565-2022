@@ -81,9 +81,9 @@ For this assignment, we will use the ECE565-C86 and the ECE565-ARM build configu
     
     For the programming assignment, you’ll need to run benchmarks from the SPEC CPU benchmark suite. Runscripts for running select SPEC2006 CPU benchmarks are provided for you in `<gem5-root>/configs/spec/`. (If you don't see this directory, please pull from the git repo.) Specifically, the following six benchmarks have been tested on ECN machines: `sjeng`, `leslie3d`, `lbm`, `astar`, `milc`, and `namd`. The same runscript can be used to select and run any benchmark of your choice as follows:
     
-       ```console
-       ./build/ECE565-ARM/gem5.opt configs/spec/spec_se.py -b <benchmark-name>
-       ```
+    ```console
+    ./build/ECE565-ARM/gem5.opt configs/spec/spec_se.py -b <benchmark-name>
+    ```
 
     where `<benchmark-name>` must be replaced with any one of the six benchmark names listed above. You should use all six benchmarks for this homework. 
     
@@ -98,7 +98,9 @@ For this assignment, we will use the ECE565-C86 and the ECE565-ARM build configu
     * Degrade branch prediction
     * Split the Execution stage into two separate pipeline stages
     
-    Each of these are detailed further below. For part (i), just evaluate the example code, running to completion. For parts (ii) and (iii), you will need to run the SPEC benchmarks (which will be provided separately) for 100 million instructions.  These results will then be compared to the baseline gem5 performance for the MinorCPU model. Make sure to take advantage of different output directories to avoid overwriting output data from different runs.
+    Each of these are detailed further below. For part (i), just evaluate the example code, running to completion. For parts (ii) and (iii), you will need to run the SPEC benchmarks for 100 million instructions.  These results will then be compared to the baseline gem5 performance for the MinorCPU model. Make sure to take advantage of different output directories to avoid overwriting output data from different runs. 
+    
+    **NOTE:** Some tasks use the x86 ISA and others use the ARM ISA. The tasks/subtasks are organized such that the first few tasks use the x86 ISA and the remainder use the ARM ISA. This is annotated in the task section titles. You will have to rebuild gem5 to use the ARM target ISA for the later tasks.
     
     A nice overview of MinorCPU can be found here: https://www.gem5.org/documentation/general_docs/cpu_models/minor_cpu
     
@@ -106,7 +108,7 @@ For this assignment, we will use the ECE565-C86 and the ECE565-ARM build configu
     
         In this task - you will write a C program, compile it then run it using different CPU models. 
     
-        1. **Run a custom program**
+        1. **Run a custom program (x86)**
             
             The DAXPY loop (double precision aX + Y) is an oft used operation in programs that work with matrices and vectors. The following code implements DAXPY in C++11.
             Place the code inside a new directory *part1/daxpy.cc*.
@@ -159,7 +161,7 @@ For this assignment, we will use the ECE565-C86 and the ECE565-ARM build configu
             ./build/ECE565-X86/gem5.opt configs/example/se.py -c <output-from-daxpy-build>
             ```
     
-        2. **Examine the assembly**
+        2. **Examine the assembly (x86)**
             
             Generate the assembly code for the daxpy program above by using the -S and -O2 options when compiling with GCC. As you can see from the assembly code, instructions that are not central to the actual task of the program (computing aX + Y) will also be simulated. This includes the instructions for generating the vectors X and Y, summing elements in Y and printing the sum. When I compiled the code with -S, I got about 350 lines of assembly code, with only about 10-15 lines for the actual daxpy loop.
 
@@ -217,15 +219,15 @@ For this assignment, we will use the ECE565-C86 and the ECE565-ARM build configu
 
         Now again simulate the program with the timing simple CPU. This time you should see three sets of statistics in the file stats.txt. Report the breakup of instructions among different op classes for the three parts of the program. In the assignment report, provide the fragment of the generated assembly code that starts with the call to m5_dump_reset_stats() and ends m5_dump_reset_stats(), and has the main daxpy loop in between.
             
-        3. **Examine CPU types**
+        3. **Examine CPU types (ARM)**
         
             There are several different types of CPUs that gem5 supports: atomic, timing, out-of-order, inorder and kvm. Let's talk about the timing and the inorder cpus. The timing CPU (also known as SimpleTimingCPU) executes each arithmetic instruction in a single cycle, but requires multiple cycles for memory accesses. Also, it is not pipelined. So only a single instruction is being worked upon at any time. The inorder cpu (also known as Minor) executes instructions in a pipelined fashion. It has the following pipe stages: fetch1, fetch2, decode and execute.
 
             Take a look at the file MinorCPU.py. In the definition of MinorFU, the class for functional units, we define two quantities opLat and issueLat. From the comments provided in the file, understand how these two parameters are to be used. Also note the different functional units that are instantiated as defined in class MinorDefaultFUPool.
 
-            Assume that the issueLat and the opLat of the FloatSimdFU can vary from 1 to 6 cycles and that they always sum to 7 cycles. For each decrease in the opLat, we need to pay with a unit increase in issueLat. Which design of the FloatSimd functional unit would you prefer? Provide statistical evidence obtained through simulations of the annotated portion of the code for daxpy.
+            Assume that the issueLat and the opLat of the FloatSimdFU can vary from 1 to 6 cycles and that they always sum to 7 cycles. For each decrease in the opLat, we need to pay with a unit increase in issueLat. Which design of the FloatSimd functional unit would you prefer? Provide statistical evidence obtained through simulations of the unannotated daxpy. For these experiments, please use the pre-compiled arm binary for daxpy that's provided at `/home/yara/mithuna2/gem5-Fall2022/daxpy-armv7-binary`. (For all parts of the homework that use the ARM ISA, we are unable to cross-compile on ECN's x86 machines. As such, you **must** use precompiled binaries.)
             
-            If you wish - you can use the following new configuration file that provides an example of how to extend the MinorCPU with options for op/issue latency.
+            If you wish - you can use the following new configuration file that provides an example of how to extend the MinorCPU with options for op/issue latency. Other students have reportedly used other approaches instead of inheritance. Some have reported that they successfully copied the files and modified the copies. As long as you can (1) implement a new kind of CPU, and (2) implement the opLat/issueLat varying in the new CPU, you will have met the requirements. You are not bound to a specific method.
             
             ```python
             # -*- coding: utf-8 -*-
@@ -309,7 +311,15 @@ For this assignment, we will use the ECE565-C86 and the ECE565-ARM build configu
     
             ```
             
-    1. **Degrade Branch Prediction**
+            To simulate workloads with the MinorCPU, you may use the following command (assuming that the daxpy-armv7-binary has been placed in `<gem5root>/part1`: 
+            
+            ```console
+            ./build/ECE565-ARM/gem5.opt configs/example/se.py --cpu-type=MinorCPU --maxinsts=250000 --l1d_size=64kB --l1i_size=16kB --caches --l2cache -c part1/daxpy-armv7-binary
+            ```
+            
+            The command includes several options which are worth getting familiar with. E.g., options to change the CPU types, options to limit simulation to a given number of instructions, and options to include/configure caches in the simulation.
+            
+    1. **Degrade Branch Prediction (ARM)**
         
         For this part and the following part (split execution stage) you should use the ARM build of gem5. Make sure you are building the ARM version using the command line:
         
@@ -329,12 +339,12 @@ For this assignment, we will use the ECE565-C86 and the ECE565-ARM build configu
         * 50%
         * 0%
         
-    1. **Split Execution Stage**
+    1. **Split Execution Stage (ARM)**
     
         For this part, we want to be able to split up the Execution Unit into two stages. Modern pipelines employ deeper pipelines in order to increase the clock frequency. Instead of having a more complex stage that requires additional cycles, the corresponding stage is split into smaller stages, where each requires fewer cycles. However, as you know there is a trade-off for every design decision. What you need to do is split up the EX stage into EX1 + EX2 accordingly. The simplest way to do this is to create a "dummy" stage in front of the current execute that does nothing but pass the input tot EX stage along.
 
 1. **Submission instructions**
     
-    The main deliverable of this assignment that will be graded is a report (and not the code). The code will still have to be submitted for plagiarism checking. But the code is not what gets graded.
+    The main deliverable of this assignment that will be graded is a report (and not the code). The code will still have to be submitted as a single patch for plagiarism checking. But the code is not what gets graded.
     
-    Submit a report (maximum three pages) with graphs and/or tables to present results via brightspace. Each graph should summarize the results of one of the experiments. (Suggested format: Plot bar-graphs with benchmarks on the X-axis and IPC on the Y-axis. For each benchmark, show two or more bars; one is the baseline and the rest correspond to your changes.) The report is NOT meant to be an exercise in writing. I do not expect any text beyond a 2-3 sentence summary of the key observations for each graph. However, this is a minimum and not a maximum. If you have text you want me to see (e.g., assumptions, simplifications, data-gathering difficulties etc.), feel free to write additional text in the report. Also if the branch of code you want me to look at is anything other than *master*, please indicate this in the report.
+    Submit a report (maximum three pages) with graphs and/or tables to present results via brightspace. Each graph should summarize the results of one of the experiments. (Suggested format: Plot bar-graphs with benchmarks on the X-axis and IPC on the Y-axis. For each benchmark, show two or more bars; one is the baseline and the rest correspond to your changes.) The report is NOT meant to be an exercise in writing. I do not expect any text beyond a 2-3 sentence summary of the key observations for each graph. However, this is a minimum and not a maximum. If you have text you want me to see (e.g., assumptions, simplifications, data-gathering difficulties etc.), feel free to write additional text in the report. 
