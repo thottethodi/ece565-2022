@@ -85,7 +85,7 @@ For this assignment, we will use the ECE565-C86 and the ECE565-ARM build configu
        ./build/ECE565-ARM/gem5.opt configs/spec/spec_se.py -b <benchmark-name>
        ```
 
-where `<benchmark-name>` must be replaced with any one of the six benchmark names listed above. You should use all six benchmarks for this homework. 
+    where `<benchmark-name>` must be replaced with any one of the six benchmark names listed above. You should use all six benchmarks for this homework. 
     
 
 1. **Assignment**
