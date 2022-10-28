@@ -79,7 +79,14 @@ For this assignment, we will use the ECE565-C86 and the ECE565-ARM build configu
     
 1. **Running gem5: Benchmarks**
     
-    For the programming assignment, you’ll need to run benchmarks from the SPEC CPU benchmark suite. Instructions on how to run benchmarks will be provided separately. 
+    For the programming assignment, you’ll need to run benchmarks from the SPEC CPU benchmark suite. Runscripts for running select SPEC2006 CPU benchmarks are provided for you in `<gem5-root>/configs/spec/`. (If you don't see this directory, please pull from the git repo.) Specifically, the following six benchmarks have been tested on ECN machines: `sjeng`, `leslie3d`, `lbm`, `astar`, `milc`, and `namd`. The same runscript can be used to select and run any benchmark of your choice as follows:
+    
+       ```console
+       ./build/ECE565-ARM/gem5.opt configs/spec/spec_se.py -b <benchmark-name>
+       ```
+
+where `<benchmark-name>` must be replaced with any one of the six benchmark names listed above. You should use all six benchmarks for this homework. 
+    
 
 1. **Assignment**
     
