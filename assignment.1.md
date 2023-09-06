@@ -1,4 +1,4 @@
-## ECE 565 Programming Assignment 1 Fall 2022
+## ECE 565 Programming Assignment 1 Fall 2023
 ### Professor Mithuna Thottethodi
 
 1. **Introduction**
