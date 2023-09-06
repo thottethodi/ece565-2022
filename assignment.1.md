@@ -88,3 +88,8 @@ For this assignment, we will use the ECE565-C86 and the ECE565-ARM build configu
     where `<benchmark-name>` must be replaced with any one of the six benchmark names listed above. You should use all six benchmarks for this homework. 
     In the spec_se.py script, we import the Options module from configs/common/Options.py. This allows us to pass arguments that control various simulation parameters, ranging from the maximum number of instructions to be simulated, the CPU model, and cache type, to the DRAM size, and so on. For this assignment, we have set the --maxinsts limit to 1M instructions. It is worth noting that in contemporary publications, the standard typically hovers around 1B instructions.
    
+1. **Submission instructions**
+    
+    The main deliverable of this assignment that will be graded is a report (and not the code). The code will still have to be submitted as a single patch for plagiarism checking. But the code is not what gets graded.
+    
+    Submit a report (maximum three pages) with graphs and/or tables to present results via brightspace. Each graph should summarize the results of one of the experiments. (Suggested format: Plot bar-graphs with benchmarks on the X-axis and IPC on the Y-axis. For each benchmark, show two or more bars; one is the baseline and the rest correspond to your changes.) The report is NOT meant to be an exercise in writing. I do not expect any text beyond a 2-3 sentence summary of the key observations for each graph. However, this is a minimum and not a maximum. If you have text you want me to see (e.g., assumptions, simplifications, data-gathering difficulties etc.), feel free to write additional text in the report. 
