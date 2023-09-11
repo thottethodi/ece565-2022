@@ -16,7 +16,7 @@
     You will clone a repository that contains a customized version of the gem5 simulator into your own accounts and do all your programming in your local copies.
  
     ```console
-    git clone /home/yara/mithuna2/gem5-Fall2022
+    git clone https://github.com/cesar-avalos3/GEM5_ECE56500_FALL23.git
     ``` 
 
     Do **not** clone the repository directly from gem5.org. The ECE-565 customized version has changes for compatibility with ECN-installed libraries. 
