@@ -1,4 +1,4 @@
-## ECE 565 Programming Assignment 2 Fall 2022
+## ECE 565 Programming Assignment 2 Fall 2023
 ### Professor Mithuna Thottethodi
 
 1. **Assignment**
@@ -55,7 +55,7 @@
                     sum += Y[i];
                 }
                 std::cout << sum;
-                return 0;·
+                return 0;
             }
             ```
             
