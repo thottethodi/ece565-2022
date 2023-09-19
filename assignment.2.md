@@ -86,7 +86,7 @@
                    git pull
              ``` 
              
-            2. You will edit the C++ code from the first part to output and reset stats just before the start of the DAXPY loop and just after it. For this, include the file ./include/gem5/m5ops.h in the program. To do so, you should use the line `#include<gem5/m5ops.h"` line in your source file. Use the function `m5_dump_reset_stats()` from this file in your program. This function outputs the statistical variables and then resets them. You can provide 0 as the value for the delay and the period arguments. This edited source file is now ready. But you cannot compile it yet until you have first built the m5ops library.
+            2. You will edit the C++ code from the first part to output and reset stats just before the start of the DAXPY loop and just after it. For this, include the file ./include/gem5/m5ops.h in the program. To do so, you should use the line `#include "gem5/m5ops.h"` line in your source file. Use the function `m5_dump_reset_stats()` from this file in your program. This function outputs the statistical variables and then resets them. You can provide 0 as the value for the delay and the period arguments. This edited source file is now ready. But you cannot compile it yet until you have first built the m5ops library.
             3.  Build the m5ops library using the following command in the `<gem5-Fall2022>/util/m5` directory:
             
             ```console
