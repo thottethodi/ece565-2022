@@ -8,8 +8,6 @@
     For this programming assignment, you will be required to implement the following changes in gem5:
 
     * Evaluate a simple pipeline.
-    * Degrade branch prediction
-    * Split the Execution stage into two separate pipeline stages
     
     Each of these are detailed further below. For part (i), just evaluate the example code, running to completion. For parts (ii) and (iii), you will need to run the SPEC benchmarks for 100 million instructions.  These results will then be compared to the baseline gem5 performance for the MinorCPU model. Make sure to take advantage of different output directories to avoid overwriting output data from different runs. 
     
