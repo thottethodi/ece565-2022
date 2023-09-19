@@ -6,6 +6,12 @@ For this assignment you should focus on the *MinorCPU* Model located in /src/cpu
     
 A nice overview of MinorCPU can be found here: https://www.gem5.org/documentation/general_docs/cpu_models/minor_cpu
 
+For this part and the following part (split execution stage) you should use the ARM build of gem5. Make sure you are building the ARM version using the command line:
+
+```console
+scons-3 USE_HDF5=0 -j `nproc` ./build/ECE565-ARM/gem5.opt
+```
+
 1. **Examine CPU types (ARM)**
 
     There are several different types of CPUs that gem5 supports: atomic, timing, out-of-order, inorder and kvm. Let's talk about the timing and the inorder cpus. The timing CPU (also known as SimpleTimingCPU) executes each arithmetic instruction in a single cycle, but requires multiple cycles for memory accesses. Also, it is not pipelined. So only a single instruction is being worked upon at any time. The inorder cpu (also known as Minor) executes instructions in a pipelined fashion. It has the following pipe stages: fetch1, fetch2, decode and execute.
@@ -108,12 +114,6 @@ A nice overview of MinorCPU can be found here: https://www.gem5.org/documentatio
    
 
 2. **Degrade Branch Prediction (ARM)**
-
-For this part and the following part (split execution stage) you should use the ARM build of gem5. Make sure you are building the ARM version using the command line:
-
-```console
-scons-3 USE_HDF5=0 -j `nproc` ./build/ECE565-ARM/gem5.opt
-```
 
 The MinorCPU already implements a few branch predictor modules, including a tournament predictor and a simpler Branch Target Buffer (BTB). The pipeline timing enables you to figure out at the EX stage whether or not the branch prediction was correct. What you need to do is implement an option that will allow you to not only enable/disable the branch predictor, but degrade its accuracy to different levels as well.
 
