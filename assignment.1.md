@@ -24,7 +24,7 @@
     (Git is the world's most popular revision control system, so if you are not familiar with it, now is a great time :).
     Given it's popularity, it is easy to find high quality documentation/tutorials online. This assignment document will provide you with the basic commands, but it is a good idea to become broadly familiar with git.)
     
-    You now have your own fresh copy of gem5! Going into your gem5 directory, you’ll see a variety of folders, including the src directory, where most of your changes will be made. You may find yourself working in the configs directory from time to time as well. It is worth spending some time exploring these directories to get a feel for where different things are.
+    You now have your own fresh copy of gem5! Going into your gem5 directory, you’ll see a variety of folders, including the src directory, where most of your changes will eventually be made. You may find yourself working in the configs directory from time to time as well. It is worth spending some time exploring these directories to get a feel for where different things are.
     
     <img src="gem5clone.png" width="50%" />
     
@@ -35,7 +35,7 @@
     Modify your `PATH` environment variable to include: `/package/gcc/8.3.0/bin`
     Modify your `LD_LIBRARY_PATH` environment variable to include: `/package/gcc/8.3.0/lib64`
     
-    (Note that the directories should be added to the beginning of the environment variables to ensure that the correct version of `gcc` is picked up by `scons-3` . The exact command to add these directories to the environment variable depends on the shell you use. It is your responsibility to figure out the appropriate steps.)
+    (Note that the directories should be added to the beginning of the environment variables to ensure that the correct version of `gcc` is picked up by the build tool `scons-3` . The exact command to add these directories to the environment variable depends on the shell you use. It is your responsibility to figure out the appropriate steps.)
 
     gem5 is a highly configurable architectural simulator that supports a number of ISAs (x86, ARM, MIPS, SPARC, POWER, RISCV), CPU Models (InOrder, O3, AtomicSimple, TimingSimple, Minor (in-order)), and two Memory Models (Classic, Ruby). To understand how to build gem5, you must understand what you are building first. Example `gem5` build files are located in `gem5/build_opts`. For this assignment you will use the ECE565-specific build options from the ’ECE565-X86’ file whose content is as follows:
     
@@ -65,7 +65,7 @@ For this assignment, we will use the ECE565-C86 and the ECE565-ARM build configu
 
 1. **Running gem5: Hello World**
     
-    The gem5.opt file you built with scons is your binary – this is what you will use to run the simulator. It takes in options and a simulation script (this is where Python comes in). To get started, let’s run a Hello World program on the simulator. Looking in your gem5/configs directory, you’ll see directories including `example`. Take a look in the example directory. The se.py script will be what we need to run Hello World. Take a look at it. You won’t understand all of it just now, but you’ll see how it’s setting up different gem5 configurations.
+    The gem5.opt file you built with scons is your simulator binary – this is what you will use to run the simulator. It takes in options and a simulation script (this is where Python comes in). To get started, let’s run a Hello World program on the simulator. Looking in your gem5/configs directory, you’ll see directories including `example`. Take a look in the example directory. The se.py script will be what we need to run Hello World. Take a look at it. You won’t understand all of it just now, but you’ll see how it’s setting up different gem5 configurations.
     
     Now that we have a script to use with gem5, we need an actual Hello World binary to run on the simulator. gem5 comes with Hello World binaries already compiled for each ISA it supports. You can find them in gem5/tests/test-progs/hello/bin. Since we’ve built an x86 model, we’ll want the gem5/tests/test-progs/hello/bin/x86/linux/hello binary. 
     
@@ -82,14 +82,14 @@ For this assignment, we will use the ECE565-C86 and the ECE565-ARM build configu
     For the programming assignment, you’ll need to run benchmarks from the SPEC CPU benchmark suite. Runscripts for running select SPEC2006 CPU benchmarks are provided for you in `<gem5-root>/configs/spec/`. (If you don't see this directory, please pull from the git repo.) Specifically, the following six benchmarks have been tested on ECN machines: `sjeng`, `leslie3d`, `lbm`, `astar`, `milc`, and `namd`. The same runscript can be used to select and run any benchmark of your choice as follows:
     
     ```console
-    ./build/ECE565-X86/gem5.opt configs/spec/spec_se.py -b <benchmark-name> --maxinsts=1000000
+    ./build/ECE565-X86/gem5.opt configs/spec/spec_se.py -b <benchmark-name> --maxinsts=10000000
     ```
 
     where `<benchmark-name>` must be replaced with any one of the six benchmark names listed above. You should use all six benchmarks for this homework. 
-    In the spec_se.py script, we import the Options module from configs/common/Options.py. This allows us to pass arguments that control various simulation parameters, ranging from the maximum number of instructions to be simulated, the CPU model, and cache type, to the DRAM size, and so on. For this assignment, we have set the --maxinsts limit to 1M instructions. It is worth noting that in contemporary publications, the standard typically hovers around 1B instructions.
+    In the spec_se.py script, we import the Options module from configs/common/Options.py. This allows us to pass arguments that control various simulation parameters, ranging from the maximum number of instructions to be simulated, the CPU model, and cache type, to the DRAM size, and so on. For this assignment, we have set the --maxinsts limit to 10M instructions. It is worth noting that in contemporary publications, the standard typically hovers around 1B instructions.
    
 1. **Submission instructions**
     
-    The main deliverable of this assignment that will be graded is a report (and not the code). The code will still have to be submitted as a single patch for plagiarism checking. But the code is not what gets graded.
+    The main deliverable of this assignment that will be graded is a report (and not the code). Because no coding is expected in this assignment, no code submission is needed. 
     
-    Submit a report (maximum three pages) with graphs and/or tables to present results via brightspace. Each graph should summarize the results of one of the experiments. (Suggested format: Plot bar-graphs with benchmarks on the X-axis and IPC on the Y-axis. For each benchmark, show two or more bars; one is the baseline and the rest correspond to your changes.) The report is NOT meant to be an exercise in writing. I do not expect any text beyond a 2-3 sentence summary of the key observations for each graph. However, this is a minimum and not a maximum. If you have text you want me to see (e.g., assumptions, simplifications, data-gathering difficulties etc.), feel free to write additional text in the report. 
+    Submit a report (maximum three pages) via gradescope with graphs and/or tables to present results from your simulation runs. The report must include (1) A summary of the instruction mix for the 'hello' program (as a pie chart, or a table), (2) Plot bar-graphs with benchmarks on the X-axis and IPC on the Y-axis.  This report is NOT meant to be an exercise in writing. The purpose is merely to confirm that you have successfully built and run the simulator and the benchmarks. 
