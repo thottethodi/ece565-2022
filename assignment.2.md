@@ -3,17 +3,14 @@
 
 1. **Assignment**
     
-    gem5 is an immensely complex piece of software with over 100k lines of code. However, it is not necessary to understand all of gem5 prior to being able to effectively use it. For this assignment you should focus on the *MinorCPU* Model located in /src/cpu/minor. The *MinorCPU* currently models a simple pipelined.  (Hint: Use the -h flag with your Python script to find out how to specify the CPU model you use.)
-    One caveat of this CPU model is that each pipeline stage/component inherits from an abstracted resource object. As with every resource, there is the contingency of encountering a structural hazard. The occurrence of a structural hazard is dependent on the width of the corresponding stage. Thus in order to model one outstanding instruction per stage, you have to adjust the width of each stage to be 1 (*hint: look inside MinorCPU.py*).
+    gem5 is an immensely complex piece of software with over 100k lines of code. However, it is not necessary to understand all of gem5 prior to being able to effectively use it. 
     For this programming assignment, you will be required to implement the following changes in gem5:
 
-    * Evaluate a simple pipeline.
+    * Evaluate a simple timing CPU.
     
     Each of these are detailed further below. For this assignment, just evaluate the example code, running to completion. Make sure to take advantage of different output directories to avoid overwriting output data from different runs. 
-    
-    A nice overview of MinorCPU can be found here: https://www.gem5.org/documentation/general_docs/cpu_models/minor_cpu
-    
-    1. **Evaluate a Simple Pipeline**
+        
+    1. **Evaluate a Simple Timing CPU**
     
         In this task - you will write a C program, compile it then run it using different CPU models. 
     
