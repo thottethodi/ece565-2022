@@ -9,7 +9,7 @@
 
     * Evaluate a simple pipeline.
     
-    Each of these are detailed further below. For part (i), just evaluate the example code, running to completion. For parts (ii) and (iii), you will need to run the SPEC benchmarks for 100 million instructions.  These results will then be compared to the baseline gem5 performance for the MinorCPU model. Make sure to take advantage of different output directories to avoid overwriting output data from different runs. 
+    Each of these are detailed further below. For this assignment, just evaluate the example code, running to completion. Make sure to take advantage of different output directories to avoid overwriting output data from different runs. 
     
     A nice overview of MinorCPU can be found here: https://www.gem5.org/documentation/general_docs/cpu_models/minor_cpu
     
