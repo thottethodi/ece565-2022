@@ -127,6 +127,6 @@
 
 2. **Submission instructions**
     
-The main deliverable of this assignment that will be graded is a report (and not the code). The code will still have to be submitted as a single patch for plagiarism checking. But the code is not what gets graded.
+The main deliverable of this assignment that will be graded is a report (and not the code). The code will still have to be submitted as a single patch for plagiarism checking. But the code is not what gets graded. (Even though you're not changing the code of the gem5 simulator, your directory will have the part1 directory which is new code. The patch should include that new code (including the m5ops changes). 
     
-Submit a report (maximum three pages) with graphs and/or tables to present results via brightspace. Each graph should summarize the results of one of the experiments. (Suggested format: Plot bar-graphs with benchmarks on the X-axis and IPC on the Y-axis. For each benchmark, show two or more bars; one is the baseline and the rest correspond to your changes.) The report is NOT meant to be an exercise in writing. I do not expect any text beyond a 2-3 sentence summary of the key observations for each graph. However, this is a minimum and not a maximum. If you have text you want me to see (e.g., assumptions, simplifications, data-gathering difficulties etc.), feel free to write additional text in the report. 
+Submit a report (maximum three pages) with graphs and/or tables to present results via Gradescope.  At a minimum, your report should include (1) the generated assembly code and (2) the breakup of instructions of the different op classes for the three parts of the program (as individual pie charts for the three phases or as a stacked bar charts with one stacked bar for each phase).  
